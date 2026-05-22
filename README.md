@@ -1,6 +1,6 @@
 # 🎯 LeadHunter — AI Google Maps Lead Generation
 
-**Built for Muhammad Irfan**
+**Developed by Muhammad Irfan**
 
 [![Live App](https://img.shields.io/badge/Live%20App-Streamlit-FF4B4B?style=for-the-badge&logo=streamlit)](https://rka8vsksqwtxscyx2hmhee.streamlit.app/)
 
