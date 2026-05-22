@@ -15,10 +15,19 @@
 ## Screenshots
 
 ### Login
-![Login Screen](screenshots/login.png)
+![Login](screenshots/1_login.png)
 
-### Leads Page
-![Leads Page](screenshots/leads.png)
+### Dashboard
+![Dashboard](screenshots/2_dashboard.png)
+
+### New Search
+![New Search](screenshots/3_search.png)
+
+### Search Results
+![Search Results](screenshots/4_search_results.png)
+
+### Dashboard with Leads
+![Dashboard with Leads](screenshots/5_dashboard_leads.png)
 
 ---
 
