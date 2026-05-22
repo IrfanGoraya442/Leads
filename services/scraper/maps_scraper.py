@@ -1,6 +1,19 @@
 from playwright.sync_api import sync_playwright
 import re
 import time
+import subprocess
+import sys
+
+def _ensure_chromium():
+    try:
+        subprocess.run(
+            [sys.executable, "-m", "playwright", "install", "chromium"],
+            check=True, capture_output=True
+        )
+    except Exception as e:
+        print(f"[Scraper] playwright install warning: {e}")
+
+_ensure_chromium()
 
 class GoogleMapsScraper:
 
