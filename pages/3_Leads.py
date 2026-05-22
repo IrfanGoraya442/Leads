@@ -94,7 +94,9 @@ for lead in filtered:
     score_bg    = "#ECFDF5" if (score or 0) >= 70 else "#FFFBEB" if (score or 0) >= 40 else "#FEF2F2"
     initial = (lead["business_name"] or "?")[0].upper()
 
-    with st.expander(f"**{lead['business_name']}**   ·   {'✅ Has Website' if lead['has_website'] else '❌ No Website'}   ·   {('⭐ ' + str(lead['rating'])) if lead['rating'] else 'No rating'}"):
+    website_tag = "✅ Has Website" if lead["has_website"] else "❌ No Website"
+    rating_tag  = f"⭐ {lead['rating']}" if lead["rating"] else "No rating"
+    with st.expander(f"{lead['business_name']}   ·   {website_tag}   ·   {rating_tag}", expanded=False):
 
         # Top row
         top_left, top_right = st.columns([3, 1])
