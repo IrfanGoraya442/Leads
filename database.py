@@ -57,6 +57,20 @@ class Lead(Base):
 
 def init_db():
     Base.metadata.create_all(engine)
+    _seed_default_user()
+
+def _seed_default_user():
+    import bcrypt
+    with get_db() as db:
+        exists = db.query(User).filter(User.email == "irfan@leadhunter.com").first()
+        if not exists:
+            hashed = bcrypt.hashpw("irfan123".encode(), bcrypt.gensalt()).decode()
+            db.add(User(
+                id=str(uuid.uuid4()),
+                name="Muhammad Irfan",
+                email="irfan@leadhunter.com",
+                password=hashed,
+            ))
 
 @contextmanager
 def get_db():
