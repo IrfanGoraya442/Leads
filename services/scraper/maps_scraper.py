@@ -98,8 +98,15 @@ class GoogleMapsScraper:
                 except Exception:
                     return None
 
-            # Name (from page if aria-label was empty)
-            biz_name = get_text("h1.DUwDvf") or name
+            # Name — try multiple selectors, fall back to aria-label
+            biz_name = (
+                get_text("h1.DUwDvf") or
+                get_text("h1") or
+                name
+            )
+            # Strip Google Maps internal rendering prefixes like _arr, _fc, etc.
+            if biz_name:
+                biz_name = re.sub(r'^_[a-zA-Z]+\s*', '', biz_name).strip()
 
             # Phone — extract number from aria-label "Phone: +971 ..."
             phone_label = get_attr('button[aria-label*="Phone"]', "aria-label")

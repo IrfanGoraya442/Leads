@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import re
 from utils.auth import require_auth
 from utils.styles import render_sidebar, page_header, score_badge
 from utils.export import to_csv, to_excel
@@ -92,11 +93,13 @@ for lead in filtered:
     score = lead["ai_score"]
     score_color = "#059669" if (score or 0) >= 70 else "#D97706" if (score or 0) >= 40 else "#DC2626"
     score_bg    = "#ECFDF5" if (score or 0) >= 70 else "#FFFBEB" if (score or 0) >= 40 else "#FEF2F2"
-    initial = (lead["business_name"] or "?")[0].upper()
+    # Strip any Google Maps internal prefix (_arr, _fc, etc.) from stored data
+    clean_name  = re.sub(r'^_[a-zA-Z]+\s*', '', lead["business_name"] or "").strip() or "Unknown"
+    initial     = clean_name[0].upper()
 
     website_tag = "✅ Has Website" if lead["has_website"] else "❌ No Website"
     rating_tag  = f"⭐ {lead['rating']}" if lead["rating"] else "No rating"
-    with st.expander(f"{lead['business_name']}   ·   {website_tag}   ·   {rating_tag}", expanded=False):
+    with st.expander(f"{clean_name}   ·   {website_tag}   ·   {rating_tag}", expanded=False):
 
         # Top row
         top_left, top_right = st.columns([3, 1])
@@ -108,7 +111,7 @@ for lead in filtered:
                     {initial}
                 </div>
                 <div>
-                    <div style="font-size:1.05rem;font-weight:700;color:#0F172A">{lead['business_name']}</div>
+                    <div style="font-size:1.05rem;font-weight:700;color:#0F172A">{clean_name}</div>
                     <div style="font-size:.82rem;color:#64748B;margin-top:2px">{lead['category'] or '—'}
                         {(' · ' + lead['address']) if lead['address'] else ''}
                     </div>
