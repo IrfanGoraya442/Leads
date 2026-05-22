@@ -1,148 +1,113 @@
-# AI Lead Hunter
-**Maintained by: Muhammad Irfan**
+# 🎯 LeadHunter — AI Google Maps Lead Generation
 
-AI-powered Google Maps lead generation. 100% free stack — no paid APIs.
+**Built for Muhammad Irfan**
+
+[![Live App](https://img.shields.io/badge/Live%20App-Streamlit-FF4B4B?style=for-the-badge&logo=streamlit)](https://rka8vsksqwtxscyx2hmhee.streamlit.app/)
+
+> Scrape Google Maps, score every lead with AI, and export ready-to-contact CSV/Excel lists — **100% free, no paid APIs.**
+
+🔗 **Live Demo:** [https://rka8vsksqwtxscyx2hmhee.streamlit.app/](https://rka8vsksqwtxscyx2hmhee.streamlit.app/)
+
+**Login:** `irfan@leadhunter.com` / `irfan123`
 
 ---
 
-## Stack
+## Screenshots
+
+### Login
+![Login Screen](screenshots/login.png)
+
+### Leads Page
+![Leads Page](screenshots/leads.png)
+
+---
+
+## Features
+
+| Feature | Description |
+|---------|-------------|
+| 🗺️ Google Maps Scraper | Scrape any business type in any city worldwide |
+| 🤖 AI Lead Scoring | Ollama (Mistral) scores every lead 0–100 with notes |
+| 📊 Dashboard | KPI cards, recent searches, lead quality breakdown |
+| 📋 Lead Management | Filter by score, website, name — with expandable cards |
+| ⬇️ Export | One-click CSV and Excel export |
+| 🔒 Auth | Register / login with bcrypt-hashed passwords |
+
+---
+
+## Tech Stack
+
 | Layer | Tech |
 |-------|------|
-| Backend | Python FastAPI + SQLAlchemy |
-| Database | PostgreSQL |
+| Frontend | Streamlit 1.57 |
+| Database | SQLite + SQLAlchemy |
 | Scraper | Playwright (headless Chromium) |
-| AI | Ollama (Mistral local) |
-| Frontend | HTML + Bootstrap Icons + Vanilla JS |
-| Deploy | Railway (backend) + Netlify (frontend) |
+| AI Scoring | Ollama (Mistral) — fallback scorer if offline |
+| Auth | bcrypt |
+| Deploy | Streamlit Cloud |
 
 ---
 
-## Local Development
+## Run Locally
 
-### Option A — Docker (recommended)
 ```bash
-# 1. Start DB + Backend
-docker-compose up -d
+# 1. Clone
+git clone https://github.com/IrfanGoraya442/Leads.git
+cd Leads
 
-# 2. Install Ollama + pull model
+# 2. Create virtual environment
+python -m venv venv
+source venv/bin/activate      # Windows: venv\Scripts\activate
+
+# 3. Install dependencies
+pip install -r requirements.txt
+playwright install chromium
+
+# 4. (Optional) Start Ollama for AI scoring
 # https://ollama.com/download
 ollama pull mistral
 
-# 3. Serve frontend
-cd frontend && python -m http.server 3000
-# Open: http://localhost:3000/login.html
+# 5. Run
+streamlit run app.py
 ```
 
-### Option B — Manual
-```bash
-# 1. Create DB
-createdb leadhunter
-
-# 2. Backend
-cd backend
-cp .env.example .env      # fill in DATABASE_URL + SECRET_KEY
-pip install -r requirements.txt
-playwright install chromium
-python main.py            # runs on http://localhost:8000
-
-# 3. Ollama AI
-ollama pull mistral && ollama serve
-
-# 4. Frontend
-cd frontend
-python -m http.server 3000
-```
+Open [http://localhost:8501](http://localhost:8501)
 
 ---
 
-## Deploy to Production
+## Project Structure
 
-### Backend → Railway
-
-1. Push code to GitHub
-2. Go to [railway.app](https://railway.app) → New Project → Deploy from GitHub
-3. Select the `backend/` folder (it auto-detects the Dockerfile)
-4. Add a PostgreSQL plugin in Railway
-5. Set environment variables:
-
-```
-DATABASE_URL    → (Railway auto-fills from plugin)
-SECRET_KEY      → any random 32-char string
-OLLAMA_BASE_URL → your Ollama server URL (or leave for Railway hosted)
-OLLAMA_MODEL    → mistral
-DEBUG           → False
-```
-
-6. Copy the Railway public URL (e.g. `https://ai-lead-hunter.up.railway.app`)
-
-### Frontend → Netlify
-
-1. Go to [netlify.com](https://netlify.com) → New site → Import from GitHub
-2. Set **Publish directory** to `frontend`
-3. Edit `frontend/config.js`:
-```js
-const APP_CONFIG = {
-  API_BASE: 'https://ai-lead-hunter.up.railway.app'  // your Railway URL
-};
-```
-4. Deploy — Netlify gives you a free `.netlify.app` domain
-
-### Auto Deploy (GitHub Actions)
-
-Add these secrets in GitHub → Settings → Secrets:
-```
-RAILWAY_TOKEN       → from Railway account settings
-NETLIFY_AUTH_TOKEN  → from Netlify user settings
-NETLIFY_SITE_ID     → from Netlify site settings
-```
-
-Every push to `main` auto-deploys both frontend and backend.
-
----
-
-## API Reference
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| POST | `/api/auth/register` | No | Register |
-| POST | `/api/auth/login` | No | Login → JWT |
-| POST | `/api/search` | Yes | Scrape + analyze |
-| GET | `/api/leads/{id}` | Yes | Get leads |
-| GET | `/api/export/{id}?format=csv` | Yes | Export |
-| GET | `/api/dashboard/stats` | Yes | Stats |
-| GET | `/health` | No | Health check |
-
----
-
-## Folder Structure
 ```
 ai-lead-hunter/
-├── backend/
-│   ├── main.py
-│   ├── config.py
-│   ├── database.py
-│   ├── Dockerfile
-│   ├── railway.toml
-│   ├── requirements.txt
-│   ├── models/          # User, Search, Lead
-│   ├── routes/          # auth, search, dashboard
-│   ├── controllers/     # business logic
-│   ├── middleware/      # JWT auth
-│   └── services/
-│       ├── scraper/     # Playwright Maps scraper
-│       └── ai/          # Ollama lead analyzer
-├── frontend/
-│   ├── config.js        # API_BASE URL config
-│   ├── login.html
-│   ├── register.html
-│   ├── index.html       # Dashboard
-│   ├── search.html      # Search form
-│   ├── leads.html       # Leads table + export
-│   ├── netlify.toml
-│   ├── components/sidebar.html
-│   └── assets/
-│       ├── css/app.css
-│       └── js/api.js | utils.js | layout.js
-├── docker-compose.yml
-├── .gitignore
-└── .github/workflows/deploy.yml
+├── app.py                  # Login / Register page
+├── database.py             # SQLite models (User, Search, Lead)
+├── requirements.txt
+├── packages.txt            # System deps for Streamlit Cloud
+├── pages/
+│   ├── 1_Dashboard.py      # KPI cards + recent searches
+│   ├── 2_Search.py         # Search form + scrape runner
+│   └── 3_Leads.py          # Lead browser + export
+├── services/
+│   ├── scraper/
+│   │   └── maps_scraper.py # Playwright Google Maps scraper
+│   └── ai/
+│       └── lead_analyzer.py# Ollama AI scoring + fallback
+├── utils/
+│   ├── auth.py             # bcrypt login / register
+│   ├── styles.py           # Sidebar, KPI cards, CSS
+│   └── export.py           # CSV / Excel export
+└── screenshots/
+    ├── login.png
+    └── leads.png
 ```
+
+---
+
+## Default Credentials (Streamlit Cloud)
+
+| Field | Value |
+|-------|-------|
+| Email | `irfan@leadhunter.com` |
+| Password | `irfan123` |
+
+> Note: The cloud database resets on each redeploy. The default account is auto-created on startup.
